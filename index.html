@@ -1,1 +1,573 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+    <title>Finora - Expense Tracker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <span>₹</span>
+            Finora
+        </div>
+
+        <p class="tagline">Track • Save • Grow</p>
+
+        <nav>
+            <a class="active">⌂ Dashboard</a>
+            <a>＋ Add Expense</a>
+            <a>▤ Transactions</a>
+            <a>◈ Goals</a>
+            <a>◉ Challenges</a>
+        </nav>
+
+        <div class="side-note">
+            <strong>Small steps.</strong>
+            <br>
+            Big savings. 🌱
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <header>
+
+            <div>
+
+                <p class="welcome">
+                    YOUR MONEY SPACE
+                </p>
+
+                <h1>
+                    Expense Dashboard 👋
+                </h1>
+
+                <p class="subtitle">
+                    Stay on top of every rupee you spend.
+                </p>
+
+            </div>
+
+            <div class="date-box">
+                📅 Today
+            </div>
+
+        </header>
+
+
+        <!-- SUMMARY -->
+
+        <section class="summary">
+
+            <div class="stat purple">
+
+                <p>Total Spent</p>
+
+                <h2>
+                    ₹{{ total }}
+                </h2>
+
+                <span>
+                    This is your current spending
+                </span>
+
+            </div>
+
+
+            <div class="stat blue">
+
+                <p>Transactions</p>
+
+                <h2>
+                    {{ expenses|length }}
+                </h2>
+
+                <span>
+                    Expenses recorded
+                </span>
+
+            </div>
+
+
+            <div class="stat orange">
+
+                <p>Top Expense</p>
+
+                {% if expenses %}
+
+                    {% set biggest = expenses|max(attribute='amount') %}
+
+                    <h2>
+                        ₹{{ biggest.amount }}
+                    </h2>
+
+                    <span>
+                        {{ biggest.expense }}
+                    </span>
+
+                {% else %}
+
+                    <h2>₹0</h2>
+
+                    <span>
+                        No expenses yet
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- ADD EXPENSE -->
+
+        <section class="add-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="small-label">
+                        QUICK ENTRY
+                    </p>
+
+                    <h2>
+                        Add a New Expense
+                    </h2>
+
+                </div>
+
+                <span class="icon">
+                    ＋
+                </span>
+
+            </div>
+
+
+            <form action="/add" method="POST">
+
+                <div class="form-grid">
+
+                    <div>
+
+                        <label>
+                            Expense Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="expense"
+                            placeholder="Eg: Lunch, Bus ticket..."
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Amount
+                        </label>
+
+                        <input
+                            type="number"
+                            name="amount"
+                            placeholder="₹ Amount"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Category
+                        </label>
+
+                        <input
+                            type="text"
+                            name="category"
+                            placeholder="Eg: Food, Travel..."
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Date
+                        </label>
+
+                        <input
+                            type="date"
+                            name="date"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button type="submit">
+                    Add Expense →
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- GOAL + CHALLENGE -->
+
+        <section class="two-column">
+
+
+            <!-- USER GOAL -->
+
+            <div class="goal-card">
+
+                <div class="card-top">
+
+                    <span>🎯</span>
+
+                    <p>
+                        MY MONEY GOAL
+                    </p>
+
+                </div>
+
+
+                {% if goal.name %}
+
+                    <h2>
+                        {{ goal.name }}
+                    </h2>
+
+                    <p class="muted">
+                        Target: ₹{{ goal.target }}
+                    </p>
+
+                    <div class="progress">
+
+                        <div style="width: 0%;"></div>
+
+                    </div>
+
+                    <div class="progress-text">
+
+                        <span>
+                            Start saving!
+                        </span>
+
+                        <strong>
+                            ₹0 / ₹{{ goal.target }}
+                        </strong>
+
+                    </div>
+
+                    <br>
+
+                    <form action="/set-goal" method="POST">
+
+                        <input
+                            type="text"
+                            name="goal_name"
+                            value="{{ goal.name }}"
+                            required
+                        >
+
+                        <input
+                            type="number"
+                            name="goal_target"
+                            value="{{ goal.target }}"
+                            required
+                        >
+
+                        <button type="submit">
+                            Update Goal →
+                        </button>
+
+                    </form>
+
+
+                {% else %}
+
+                    <h2>
+                        Set Your Goal
+                    </h2>
+
+                    <p class="muted">
+                        What are you saving for?
+                    </p>
+
+
+                    <form action="/set-goal" method="POST">
+
+                        <input
+                            type="text"
+                            name="goal_name"
+                            placeholder="Eg: New Phone"
+                            required
+                        >
+
+                        <input
+                            type="number"
+                            name="goal_target"
+                            placeholder="Target amount ₹"
+                            required
+                        >
+
+                        <button type="submit">
+                            Set Goal →
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- CHALLENGE -->
+
+            <div class="challenge-card">
+
+                <div class="card-top">
+
+                    <span>🔥</span>
+
+                    <p>
+                        MONTHLY CHALLENGE
+                    </p>
+
+                </div>
+
+                <h2>
+                    Spend Less Week
+                </h2>
+
+                <p class="muted">
+                    Try avoiding unnecessary purchases
+                    for 7 days.
+                </p>
+
+                <div class="days">
+
+                    <span>✓</span>
+                    <span>✓</span>
+                    <span>✓</span>
+                    <span>4</span>
+                    <span>5</span>
+                    <span>6</span>
+                    <span>7</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SAVING MILESTONES -->
+
+        <section class="milestone-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="small-label">
+                        KEEP GOING
+                    </p>
+
+                    <h2>
+                        Saving Milestones
+                    </h2>
+
+                </div>
+
+                <span>
+                    🏆
+                </span>
+
+            </div>
+
+
+            <div class="milestones">
+
+                <div class="milestone unlocked">
+
+                    <div>₹</div>
+
+                    <strong>
+                        ₹1K
+                    </strong>
+
+                    <small>
+                        First Step
+                    </small>
+
+                </div>
+
+
+                <div class="milestone unlocked">
+
+                    <div>★</div>
+
+                    <strong>
+                        ₹5K
+                    </strong>
+
+                    <small>
+                        Good Start
+                    </small>
+
+                </div>
+
+
+                <div class="milestone">
+
+                    <div>◆</div>
+
+                    <strong>
+                        ₹10K
+                    </strong>
+
+                    <small>
+                        Money Saver
+                    </small>
+
+                </div>
+
+
+                <div class="milestone">
+
+                    <div>♛</div>
+
+                    <strong>
+                        ₹25K
+                    </strong>
+
+                    <small>
+                        Super Saver
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECENT EXPENSES -->
+
+        <section class="transactions">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="small-label">
+                        YOUR ACTIVITY
+                    </p>
+
+                    <h2>
+                        Recent Expenses
+                    </h2>
+
+                </div>
+
+                <span>
+                    View All →
+                </span>
+
+            </div>
+
+
+            {% if expenses %}
+
+                {% for expense in expenses|reverse %}
+
+                    <div class="transaction">
+
+                        <div class="transaction-icon">
+                            ₹
+                        </div>
+
+
+                        <div class="transaction-info">
+
+                            <strong>
+                                {{ expense.expense }}
+                            </strong>
+
+                            <small>
+                                {{ expense.category }}
+                                •
+                                {{ expense.date }}
+                            </small>
+
+                        </div>
+
+
+                        <strong class="amount">
+
+                            - ₹{{ expense.amount }}
+
+                        </strong>
+
+                    </div>
+
+                {% endfor %}
+
+
+            {% else %}
+
+                <div class="empty">
+
+                    <div>
+                        🧾
+                    </div>
+
+                    <h3>
+                        No expenses yet
+                    </h3>
+
+                    <p>
+                        Add your first expense above.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
