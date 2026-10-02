@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finora - Expense Tracker</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 
 <body>
@@ -13,9 +12,7 @@
 <div class="app">
 
     <!-- SIDEBAR -->
-
     <aside class="sidebar">
-
         <div class="logo">
             <span>₹</span>
             Finora
@@ -24,11 +21,11 @@
         <p class="tagline">Track • Save • Grow</p>
 
         <nav>
-            <a class="active">⌂ Dashboard</a>
-            <a>＋ Add Expense</a>
-            <a>▤ Transactions</a>
-            <a>◈ Goals</a>
-            <a>◉ Challenges</a>
+            <a class="active" href="#dashboard">⌂ Dashboard</a>
+            <a href="#add-expense">＋ Add Expense</a>
+            <a href="#transactions">▤ Transactions</a>
+            <a href="#goal">◈ Goals</a>
+            <a href="#challenge">◉ Challenges</a>
         </nav>
 
         <div class="side-note">
@@ -36,197 +33,110 @@
             <br>
             Big savings. 🌱
         </div>
-
     </aside>
 
 
     <!-- MAIN -->
-
-    <main class="main">
+    <main class="main" id="dashboard">
 
         <header>
-
             <div>
+                <p class="welcome">YOUR MONEY SPACE</p>
 
-                <p class="welcome">
-                    YOUR MONEY SPACE
-                </p>
-
-                <h1>
-                    Expense Dashboard 👋
-                </h1>
+                <h1>Expense Dashboard 👋</h1>
 
                 <p class="subtitle">
                     Stay on top of every rupee you spend.
                 </p>
-
             </div>
 
             <div class="date-box">
-                📅 Today
+                📅 <span id="today"></span>
             </div>
-
         </header>
 
 
         <!-- SUMMARY -->
-
         <section class="summary">
 
             <div class="stat purple">
-
                 <p>Total Spent</p>
-
-                <h2>
-                    ₹{{ total }}
-                </h2>
-
-                <span>
-                    This is your current spending
-                </span>
-
+                <h2>₹<span id="total">0</span></h2>
+                <span>This is your current spending</span>
             </div>
-
 
             <div class="stat blue">
-
                 <p>Transactions</p>
-
-                <h2>
-                    {{ expenses|length }}
-                </h2>
-
-                <span>
-                    Expenses recorded
-                </span>
-
+                <h2 id="count">0</h2>
+                <span>Expenses recorded</span>
             </div>
 
-
             <div class="stat orange">
-
                 <p>Top Expense</p>
-
-                {% if expenses %}
-
-                    {% set biggest = expenses|max(attribute='amount') %}
-
-                    <h2>
-                        ₹{{ biggest.amount }}
-                    </h2>
-
-                    <span>
-                        {{ biggest.expense }}
-                    </span>
-
-                {% else %}
-
-                    <h2>₹0</h2>
-
-                    <span>
-                        No expenses yet
-                    </span>
-
-                {% endif %}
-
+                <h2>₹<span id="topAmount">0</span></h2>
+                <span id="topName">No expenses yet</span>
             </div>
 
         </section>
 
 
         <!-- ADD EXPENSE -->
-
-        <section class="add-card">
+        <section class="add-card" id="add-expense">
 
             <div class="section-heading">
-
                 <div>
-
-                    <p class="small-label">
-                        QUICK ENTRY
-                    </p>
-
-                    <h2>
-                        Add a New Expense
-                    </h2>
-
+                    <p class="small-label">QUICK ENTRY</p>
+                    <h2>Add a New Expense</h2>
                 </div>
 
-                <span class="icon">
-                    ＋
-                </span>
-
+                <span class="icon">＋</span>
             </div>
 
-
-            <form action="/add" method="POST">
+            <form id="expenseForm">
 
                 <div class="form-grid">
 
                     <div>
-
-                        <label>
-                            Expense Name
-                        </label>
-
+                        <label>Expense Name</label>
                         <input
                             type="text"
-                            name="expense"
+                            id="expenseName"
                             placeholder="Eg: Lunch, Bus ticket..."
                             required
                         >
-
                     </div>
 
-
                     <div>
-
-                        <label>
-                            Amount
-                        </label>
-
+                        <label>Amount</label>
                         <input
                             type="number"
-                            name="amount"
+                            id="expenseAmount"
                             placeholder="₹ Amount"
+                            min="1"
                             required
                         >
-
                     </div>
 
-
                     <div>
-
-                        <label>
-                            Category
-                        </label>
-
+                        <label>Category</label>
                         <input
                             type="text"
-                            name="category"
+                            id="expenseCategory"
                             placeholder="Eg: Food, Travel..."
                             required
                         >
-
                     </div>
 
-
                     <div>
-
-                        <label>
-                            Date
-                        </label>
-
+                        <label>Date</label>
                         <input
                             type="date"
-                            name="date"
+                            id="expenseDate"
                             required
                         >
-
                     </div>
 
                 </div>
-
 
                 <button type="submit">
                     Add Expense →
@@ -238,141 +148,75 @@
 
 
         <!-- GOAL + CHALLENGE -->
-
         <section class="two-column">
 
-
-            <!-- USER GOAL -->
-
-            <div class="goal-card">
+            <!-- GOAL -->
+            <div class="goal-card" id="goal">
 
                 <div class="card-top">
-
                     <span>🎯</span>
-
-                    <p>
-                        MY MONEY GOAL
-                    </p>
-
+                    <p>MY MONEY GOAL</p>
                 </div>
 
+                <h2 id="goalTitle">Set Your Goal</h2>
 
-                {% if goal.name %}
+                <p class="muted" id="goalQuestion">
+                    What are you saving for?
+                </p>
 
-                    <h2>
-                        {{ goal.name }}
-                    </h2>
+                <div class="progress">
+                    <div id="progressBar"></div>
+                </div>
 
-                    <p class="muted">
-                        Target: ₹{{ goal.target }}
-                    </p>
+                <div class="progress-text">
+                    <span id="progressMessage">Start saving!</span>
+                    <strong>
+                        ₹<span id="savedAmount">0</span> /
+                        ₹<span id="goalTarget">0</span>
+                    </strong>
+                </div>
 
-                    <div class="progress">
+                <form id="goalForm">
 
-                        <div style="width: 0%;"></div>
+                    <input
+                        type="text"
+                        id="goalName"
+                        placeholder="Eg: New Phone"
+                        required
+                    >
 
-                    </div>
+                    <input
+                        type="number"
+                        id="goalTargetInput"
+                        placeholder="Target amount ₹"
+                        min="1"
+                        required
+                    >
 
-                    <div class="progress-text">
+                    <button type="submit">
+                        Set Goal →
+                    </button>
 
-                        <span>
-                            Start saving!
-                        </span>
-
-                        <strong>
-                            ₹0 / ₹{{ goal.target }}
-                        </strong>
-
-                    </div>
-
-                    <br>
-
-                    <form action="/set-goal" method="POST">
-
-                        <input
-                            type="text"
-                            name="goal_name"
-                            value="{{ goal.name }}"
-                            required
-                        >
-
-                        <input
-                            type="number"
-                            name="goal_target"
-                            value="{{ goal.target }}"
-                            required
-                        >
-
-                        <button type="submit">
-                            Update Goal →
-                        </button>
-
-                    </form>
-
-
-                {% else %}
-
-                    <h2>
-                        Set Your Goal
-                    </h2>
-
-                    <p class="muted">
-                        What are you saving for?
-                    </p>
-
-
-                    <form action="/set-goal" method="POST">
-
-                        <input
-                            type="text"
-                            name="goal_name"
-                            placeholder="Eg: New Phone"
-                            required
-                        >
-
-                        <input
-                            type="number"
-                            name="goal_target"
-                            placeholder="Target amount ₹"
-                            required
-                        >
-
-                        <button type="submit">
-                            Set Goal →
-                        </button>
-
-                    </form>
-
-                {% endif %}
+                </form>
 
             </div>
 
 
             <!-- CHALLENGE -->
-
-            <div class="challenge-card">
+            <div class="challenge-card" id="challenge">
 
                 <div class="card-top">
-
                     <span>🔥</span>
-
-                    <p>
-                        MONTHLY CHALLENGE
-                    </p>
-
+                    <p>MONTHLY CHALLENGE</p>
                 </div>
 
-                <h2>
-                    Spend Less Week
-                </h2>
+                <h2>Spend Less Week</h2>
 
                 <p class="muted">
-                    Try avoiding unnecessary purchases
-                    for 7 days.
+                    Try avoiding unnecessary purchases for 7 days.
                 </p>
 
                 <div class="days">
-
                     <span>✓</span>
                     <span>✓</span>
                     <span>✓</span>
@@ -380,7 +224,6 @@
                     <span>5</span>
                     <span>6</span>
                     <span>7</span>
-
                 </div>
 
             </div>
@@ -389,89 +232,43 @@
 
 
         <!-- SAVING MILESTONES -->
-
         <section class="milestone-card">
 
             <div class="section-heading">
 
                 <div>
-
-                    <p class="small-label">
-                        KEEP GOING
-                    </p>
-
-                    <h2>
-                        Saving Milestones
-                    </h2>
-
+                    <p class="small-label">KEEP GOING</p>
+                    <h2>Saving Milestones</h2>
                 </div>
 
-                <span>
-                    🏆
-                </span>
+                <span>🏆</span>
 
             </div>
-
 
             <div class="milestones">
 
                 <div class="milestone unlocked">
-
                     <div>₹</div>
-
-                    <strong>
-                        ₹1K
-                    </strong>
-
-                    <small>
-                        First Step
-                    </small>
-
+                    <strong>₹1K</strong>
+                    <small>First Step</small>
                 </div>
-
 
                 <div class="milestone unlocked">
-
                     <div>★</div>
-
-                    <strong>
-                        ₹5K
-                    </strong>
-
-                    <small>
-                        Good Start
-                    </small>
-
+                    <strong>₹5K</strong>
+                    <small>Good Start</small>
                 </div>
 
-
                 <div class="milestone">
-
                     <div>◆</div>
-
-                    <strong>
-                        ₹10K
-                    </strong>
-
-                    <small>
-                        Money Saver
-                    </small>
-
+                    <strong>₹10K</strong>
+                    <small>Money Saver</small>
                 </div>
 
-
                 <div class="milestone">
-
                     <div>♛</div>
-
-                    <strong>
-                        ₹25K
-                    </strong>
-
-                    <small>
-                        Super Saver
-                    </small>
-
+                    <strong>₹25K</strong>
+                    <small>Super Saver</small>
                 </div>
 
             </div>
@@ -479,95 +276,298 @@
         </section>
 
 
-        <!-- RECENT EXPENSES -->
-
-        <section class="transactions">
+        <!-- TRANSACTIONS -->
+        <section class="transactions" id="transactions">
 
             <div class="section-heading">
 
                 <div>
-
-                    <p class="small-label">
-                        YOUR ACTIVITY
-                    </p>
-
-                    <h2>
-                        Recent Expenses
-                    </h2>
-
+                    <p class="small-label">YOUR ACTIVITY</p>
+                    <h2>Recent Expenses</h2>
                 </div>
 
-                <span>
-                    View All →
-                </span>
+                <span>View All →</span>
 
             </div>
 
-
-            {% if expenses %}
-
-                {% for expense in expenses|reverse %}
-
-                    <div class="transaction">
-
-                        <div class="transaction-icon">
-                            ₹
-                        </div>
-
-
-                        <div class="transaction-info">
-
-                            <strong>
-                                {{ expense.expense }}
-                            </strong>
-
-                            <small>
-                                {{ expense.category }}
-                                •
-                                {{ expense.date }}
-                            </small>
-
-                        </div>
-
-
-                        <strong class="amount">
-
-                            - ₹{{ expense.amount }}
-
-                        </strong>
-
-                    </div>
-
-                {% endfor %}
-
-
-            {% else %}
+            <div id="transactionList">
 
                 <div class="empty">
-
-                    <div>
-                        🧾
-                    </div>
-
-                    <h3>
-                        No expenses yet
-                    </h3>
-
-                    <p>
-                        Add your first expense above.
-                    </p>
-
+                    <div>🧾</div>
+                    <h3>No expenses yet</h3>
+                    <p>Add your first expense above.</p>
                 </div>
 
-            {% endif %}
+            </div>
 
         </section>
-
 
     </main>
 
 </div>
 
-</body>
 
+<script>
+
+    // DATE
+    const todayElement = document.getElementById("today");
+    const now = new Date();
+
+    todayElement.textContent = now.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+
+    document.getElementById("expenseDate").value =
+        new Date().toISOString().split("T")[0];
+
+
+    // DATA
+    let expenses = JSON.parse(
+        localStorage.getItem("finoraExpenses") || "[]"
+    );
+
+    let goal = JSON.parse(
+        localStorage.getItem("finoraGoal") || "null"
+    );
+
+
+    // ELEMENTS
+    const totalEl = document.getElementById("total");
+    const countEl = document.getElementById("count");
+    const topAmountEl = document.getElementById("topAmount");
+    const topNameEl = document.getElementById("topName");
+    const transactionList = document.getElementById("transactionList");
+
+    const goalTitle = document.getElementById("goalTitle");
+    const goalQuestion = document.getElementById("goalQuestion");
+    const goalTargetEl = document.getElementById("goalTarget");
+    const goalNameInput = document.getElementById("goalName");
+    const goalTargetInput = document.getElementById("goalTargetInput");
+    const progressBar = document.getElementById("progressBar");
+    const progressMessage = document.getElementById("progressMessage");
+
+
+    // SAVE EXPENSES
+    function saveExpenses() {
+        localStorage.setItem(
+            "finoraExpenses",
+            JSON.stringify(expenses)
+        );
+    }
+
+
+    // RENDER EXPENSES
+    function renderExpenses() {
+
+        if (expenses.length === 0) {
+
+            transactionList.innerHTML = `
+                <div class="empty">
+                    <div>🧾</div>
+                    <h3>No expenses yet</h3>
+                    <p>Add your first expense above.</p>
+                </div>
+            `;
+
+        } else {
+
+            transactionList.innerHTML = "";
+
+            [...expenses].reverse().forEach(expense => {
+
+                const item = document.createElement("div");
+                item.className = "transaction";
+
+                item.innerHTML = `
+                    <div class="transaction-icon">₹</div>
+
+                    <div class="transaction-info">
+                        <strong>${escapeHtml(expense.name)}</strong>
+                        <small>
+                            ${escapeHtml(expense.category)}
+                            •
+                            ${escapeHtml(expense.date)}
+                        </small>
+                    </div>
+
+                    <strong class="amount">
+                        - ₹${Number(expense.amount).toLocaleString("en-IN")}
+                    </strong>
+                `;
+
+                transactionList.appendChild(item);
+            });
+        }
+
+
+        const total = expenses.reduce(
+            (sum, item) => sum + Number(item.amount),
+            0
+        );
+
+        totalEl.textContent = total.toLocaleString("en-IN");
+
+        countEl.textContent = expenses.length;
+
+
+        if (expenses.length > 0) {
+
+            const biggest = [...expenses].sort(
+                (a, b) => Number(b.amount) - Number(a.amount)
+            )[0];
+
+            topAmountEl.textContent =
+                Number(biggest.amount).toLocaleString("en-IN");
+
+            topNameEl.textContent = biggest.name;
+
+        } else {
+
+            topAmountEl.textContent = "0";
+            topNameEl.textContent = "No expenses yet";
+        }
+
+        updateGoal();
+    }
+
+
+    // ADD EXPENSE
+    document.getElementById("expenseForm").addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+            const newExpense = {
+
+                name:
+                    document.getElementById("expenseName").value.trim(),
+
+                amount:
+                    Number(document.getElementById("expenseAmount").value),
+
+                category:
+                    document.getElementById("expenseCategory").value.trim(),
+
+                date:
+                    document.getElementById("expenseDate").value
+            };
+
+            expenses.push(newExpense);
+
+            saveExpenses();
+
+            this.reset();
+
+            document.getElementById("expenseDate").value =
+                new Date().toISOString().split("T")[0];
+
+            renderExpenses();
+        }
+    );
+
+
+    // SAVE GOAL
+    document.getElementById("goalForm").addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+            goal = {
+
+                name:
+                    goalNameInput.value.trim(),
+
+                target:
+                    Number(goalTargetInput.value)
+            };
+
+            localStorage.setItem(
+                "finoraGoal",
+                JSON.stringify(goal)
+            );
+
+            updateGoal();
+        }
+    );
+
+
+    // GOAL UPDATE
+    function updateGoal() {
+
+        if (!goal || !goal.name || !goal.target) {
+
+            goalTitle.textContent = "Set Your Goal";
+
+            goalQuestion.textContent =
+                "What are you saving for?";
+
+            goalTargetEl.textContent = "0";
+
+            progressBar.style.width = "0%";
+
+            progressMessage.textContent =
+                "Start saving!";
+
+            return;
+        }
+
+
+        goalTitle.textContent = goal.name;
+
+        goalQuestion.textContent =
+            "Target: ₹" +
+            Number(goal.target).toLocaleString("en-IN");
+
+        goalTargetEl.textContent =
+            Number(goal.target).toLocaleString("en-IN");
+
+
+        const totalSpent = expenses.reduce(
+            (sum, item) => sum + Number(item.amount),
+            0
+        );
+
+
+        const progress =
+            Math.min((totalSpent / goal.target) * 100, 100);
+
+        progressBar.style.width = progress + "%";
+
+
+        if (progress >= 100) {
+
+            progressMessage.textContent =
+                "Goal reached! 🎉";
+
+        } else {
+
+            progressMessage.textContent =
+                "Keep going!";
+        }
+
+    }
+
+
+    // BASIC HTML SAFETY
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    // START
+    renderExpenses();
+
+</script>
+
+</body>
 </html>
